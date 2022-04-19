@@ -1,5 +1,5 @@
 import { axiosClient } from "./link.js";
-const SaveoderAPI = {
+const SaveorderAPI = {
     getAll() {
         const url = `/saveoder`;
         return axiosClient.get(url);
@@ -22,4 +22,4 @@ const SaveoderAPI = {
     },
 
 };
-export default SaveoderAPI;
+export default SaveorderAPI;

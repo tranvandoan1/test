@@ -2,21 +2,25 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import CateAPI from '../API/CateAPI'
 import ProAPI from '../API/ProAPI'
-import SaveoderAPI from '../API/SaveOder'
-
+import SaveorderAPI from '../API/SaveOrder'
+import { useDispatch, useSelector } from 'react-redux'
+import { addSaveorder, getSaveOrder, updateSaveorder } from '../../features/saveorderSlice/saveOrderSlice'
 const Orders = () => {
     const [products, setProduct] = useState([])
     const [categories, setCategori] = useState([])
     const [productOrder, setProductOrder] = useState([])
     const [quantity, setQuantity] = useState(1)
     const { id } = useParams()
+    const dispatch = useDispatch()
+    const saveorders = useSelector(data => data.saveorder.value)
     useEffect(() => {
+        dispatch(getSaveOrder())
         const listData = async () => {
             const { data: products } = await ProAPI.getAll()
             const { data: categories } = await CateAPI.getAll()
-            const { data: saveoder } = await SaveoderAPI.getAll();
             setProduct(products)
 
+            // lấy ra danh sách cate mà có sản phẩm
             const cateArr = []
             categories.filter(cate => {
                 products.map(pro => {
@@ -25,7 +29,7 @@ const Orders = () => {
                     }
                 })
             })
-            
+            // lấy ra cách tên danh mục không trùng nhau
             const commodityvalueArr = (cateArr = []) => {
                 const newCommodityvalue = [];
                 while (cateArr.length > 0) {
@@ -36,10 +40,27 @@ const Orders = () => {
             }
             setCategori(commodityvalueArr(cateArr))
 
-            setProductOrder(saveoder.filter(item => item.id_table == id));
+            setProductOrder(saveorders.filter(item => item.id_table == id));
         }
         listData()
     }, [])
+
+    const selectProduct = async (id_pro) => {
+        const newSaveOder = products.find(item => item.id == id_pro)
+        const newOder = {
+            id_oder: `${Math.random()}`,
+            amount: `1`,
+            id_table: id,
+            ...newSaveOder,
+          };
+        SaveorderAPI.remove('0.875796218453081')
+        console.log(newOder )
+        // setProductOrder([...saveorders,{ ...newSaveOder, newOder}])
+        // console.log({ ...newSaveOder, id_oder: `${Math.random()}` })
+        // dispatch(addSaveorder({ ...newSaveOder, newOder}))
+    }
+
+
     return (
         <div className="container-fluid">
             <div className="row">
@@ -74,7 +95,7 @@ const Orders = () => {
                                         {products.map(item_pro => {
                                             if (item_cate.id == item_pro.cate_id) {
                                                 return (
-                                                    <div className="col-md-3" key={item_pro.id}>
+                                                    <div className="col-md-3" key={item_pro.id} onClick={() => selectProduct(item_pro.id)}>
                                                         <div className="list_pro" >
                                                             <div className="img"><img src={item_pro.image} alt="" />
                                                                 <div className="name-price">

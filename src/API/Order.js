@@ -1,5 +1,5 @@
 import { axiosClient } from "./link.js";
-const OderAPI = {
+const OrderAPI = {
     getAll() {
         const url = `/oders`;
         return axiosClient.get(url);
@@ -18,4 +18,4 @@ const OderAPI = {
     },
 
 };
-export default OderAPI;
+export default OrderAPI;

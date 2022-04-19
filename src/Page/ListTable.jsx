@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { $ } from '../../ultis'
-import SaveoderAPI from '../API/SaveOder'
+import SaveorderAPI from '../API/SaveOrder'
 import TableAPI from '../API/TableAPI'
-
+import { useDispatch,useSelector } from 'react-redux'
+import { getSaveOrder } from '../../features/saveorderSlice/saveOrderSlice'
 const ListTable = () => {
+    const dispatch = useDispatch()
     const [saveoder, setSaveoder] = useState([])
     const [table, setTable] = useState([])
     const [nameTable, setNameTable] = useState()
     const [idTable, setIdTable] = useState()
+    const saveorders=useSelector(data=>data)
+    console.log(saveorders)
     useEffect(() => {
         const getData = async () => {
             const { data: table } = await TableAPI.getAll();
-            const { data: saveoder } = await SaveoderAPI.getAll()
+            console.log(table)
+            const { data: saveoder } = await SaveorderAPI.getAll()
             setSaveoder(saveoder)
             setTable(table)
         }
         getData()
+        dispatch(getSaveOrder())
     }, [])
     const listAddTable = () => {
         $(".list-add-table").classList.add("active-add")//hiện input 
@@ -52,7 +58,7 @@ const ListTable = () => {
         <React.Fragment>
             <div className="row">
                 {table.map(item => {
-  
+
                     return (
                         <div className="col-3 col-md-1" key={item.id}>
                             <div className="user_group" onClick={() => setIdTable(item.id)}>
